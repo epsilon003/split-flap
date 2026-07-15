@@ -1,0 +1,148 @@
+.tile {
+  position: relative;
+  width: var(--tile-w);
+  height: var(--tile-h);
+  border-radius: 2px;
+  background: var(--tile-bg);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.03);
+  perspective: 420px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;
+}
+
+/* seam line where the two flaps meet */
+.tile::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-1px);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.65),
+    rgba(0, 0, 0, 0.15)
+  );
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* faint rounded-corner vignette per tile for depth */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  border-radius: 2px;
+  box-shadow: inset 0 6px 10px -8px rgba(0, 0, 0, 0.5),
+    inset 0 -6px 10px -8px rgba(0, 0, 0, 0.5);
+}
+
+.tile-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--tile-panel);
+}
+
+.tile-half.top {
+  top: 0;
+  border-radius: 2px 2px 0 0;
+  box-shadow: inset 0 3px 4px -2px rgba(255, 255, 255, 0.06);
+}
+
+.tile-half.bottom {
+  bottom: 0;
+  border-radius: 0 0 2px 2px;
+  box-shadow: inset 0 -3px 5px -2px rgba(0, 0, 0, 0.5);
+}
+
+.tile-flip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--tile-panel-flip);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  z-index: 5;
+  will-change: transform;
+}
+
+.tile-flip.flip-top {
+  top: 0;
+  transform-origin: 50% 100%;
+  border-radius: 2px 2px 0 0;
+  box-shadow: inset 0 3px 5px -2px rgba(255, 255, 255, 0.08);
+}
+
+.tile-flip.flip-bottom {
+  bottom: 0;
+  transform-origin: 50% 0%;
+  border-radius: 0 0 2px 2px;
+  box-shadow: inset 0 -3px 6px -2px rgba(0, 0, 0, 0.55);
+}
+
+/* the glyph is rendered full-tile-height and shifted so only its half shows */
+.glyph-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--tile-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--board-font);
+  font-size: var(--tile-font-size);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--tile-glyph-color);
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.tile-half.bottom .glyph-text,
+.tile-flip.flip-bottom .glyph-text {
+  top: calc(var(--tile-h) * -0.5);
+}
+
+.glyph-swatch {
+  position: absolute;
+  inset: -1px;
+}
+
+.tile-half.top .glyph-swatch,
+.tile-flip.flip-top .glyph-swatch {
+  top: -1px;
+  bottom: 0;
+}
+.tile-half.bottom .glyph-swatch,
+.tile-flip.flip-bottom .glyph-swatch {
+  top: 0;
+  bottom: -1px;
+}
+
+/* subtle mounting rivets, echoes the physical unit's frame screws */
+.tile-hinge-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  margin-left: -1.5px;
+  margin-top: -1.5px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0.5;
+}
