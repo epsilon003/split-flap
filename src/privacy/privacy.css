@@ -1,0 +1,70 @@
+.privacy-root {
+  max-width: 640px;
+}
+
+.privacy-root h1 {
+  font-size: 16px;
+}
+
+.privacy-root p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(240, 239, 233, 0.85);
+}
+
+.privacy-root ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(240, 239, 233, 0.85);
+}
+
+.privacy-root li {
+  margin-bottom: 4px;
+}
+
+.privacy-root code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.privacy-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.privacy-table th,
+.privacy-table td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.privacy-table th {
+  color: rgba(240, 239, 233, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 10.5px;
+}
+
+.privacy-table td {
+  color: rgba(240, 239, 233, 0.85);
+}
+
+.privacy-root a {
+  color: #7fa8e0;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.privacy-root a:hover {
+  text-decoration: underline;
+}
