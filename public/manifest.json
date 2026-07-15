@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Split Flap Display",
+  "version": "1.1.0",
+  "description": "Turns every new tab into a mechanical split-flap display. Inspired by Vestaboard.",
+  "chrome_url_overrides": {
+    "newtab": "src/newtab/index.html"
+  },
+  "options_page": "src/options/index.html",
+  "action": {
+    "default_popup": "src/popup/index.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "tabs", "alarms"],
+  "host_permissions": [
+    "https://api.open-meteo.com/*",
+    "https://api.github.com/*",
+    "https://api.chess.com/*",
+    "https://wakatime.com/*",
+    "https://api.steampowered.com/*",
+    "https://api.monkeytype.com/*"
+  ],
+  "minimum_chrome_version": "116"
+}
