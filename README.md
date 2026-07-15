@@ -2,7 +2,7 @@
 
 A split-flap mechanical display for your new tab, inspired by Vestaboard.
 MV3 Chrome extension, no backend, no accounts.
-
+![](screenshot.PNG)
 ## What changed in this pass
 
 - **Weather icon widened further** — 6x6 → 9x6, bolder/fuller shapes.
