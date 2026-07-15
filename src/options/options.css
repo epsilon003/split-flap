@@ -1,0 +1,251 @@
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  margin: 0;
+  background: #101012;
+  color: #f0efe9;
+  font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.options-root {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+}
+
+.options-root a {
+  color: #7fa8e0;
+  text-decoration: none;
+}
+
+.options-root a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 28px;
+}
+
+section {
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+h2 {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(240, 239, 233, 0.6);
+  margin: 0 0 12px;
+}
+
+.hint {
+  font-size: 12px;
+  color: rgba(240, 239, 233, 0.42);
+  margin: 0 0 14px;
+  line-height: 1.55;
+}
+
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+
+.module-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 0;
+}
+
+.module-row input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: #2a5ca8;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(240, 239, 233, 0.65);
+  margin-top: 12px;
+}
+
+.field input[type="text"],
+.field input[type="number"],
+.field select,
+textarea {
+  background: #1a1a1d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #f0efe9;
+  padding: 9px 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.field input[type="text"]:focus,
+.field input[type="number"]:focus,
+.field select:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.field input[type="range"] {
+  accent-color: #2a5ca8;
+}
+
+.field input[type="color"] {
+  width: 100%;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: #1a1a1d;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  background: #2a5ca8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 15px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.status {
+  font-size: 11.5px;
+  margin: 8px 0 0;
+  font-weight: 500;
+}
+.status.ok {
+  color: #6fbf73;
+}
+.status.error {
+  color: #d97a7a;
+}
+
+kbd {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+
+.reorder-row {
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.reorder-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.icon-btn {
+  width: 20px;
+  height: 16px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 3px;
+  color: #f0efe9;
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.module-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: rgba(240, 239, 233, 0.4);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 6px;
+}
+
+.text-btn:hover {
+  color: rgba(240, 239, 233, 0.7);
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  background: rgba(42, 92, 168, 0.15);
+  border: 1px solid rgba(42, 92, 168, 0.35);
+  color: #7fa8e0;
+  border-radius: 14px;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: rgba(42, 92, 168, 0.25);
+}
