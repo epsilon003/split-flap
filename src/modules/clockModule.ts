@@ -39,7 +39,14 @@ export function usePermanentClock(use24h: boolean): ClockText {
   useEffect(() => {
     const tick = () => {
       const now = new Date();
-      setValue({ time: formatClock(now, use24h), date: formatDate(now) });
+      const next = { time: formatClock(now, use24h), date: formatDate(now) };
+      // formatClock only has minute precision, so this is true 59 out of
+      // every 60 ticks — skipping the state update then avoids forcing a
+      // re-render (and the resulting 256-tile reconciliation pass) every
+      // single second when nothing visible has actually changed
+      setValue((prev) =>
+        prev.time === next.time && prev.date === next.date ? prev : next
+      );
     };
     tick();
     const interval = setInterval(tick, 1000);
