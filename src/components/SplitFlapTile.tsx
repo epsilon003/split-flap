@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { normalizeChar } from "../engine/CharacterWheel";
 import {
   cancelAndReset,
@@ -17,7 +17,7 @@ interface SplitFlapTileProps {
   waveDelayMs?: number;
 }
 
-export default function SplitFlapTile({
+function SplitFlapTile({
   targetChar,
   tileIndex,
   waveDelayMs = 0,
@@ -68,8 +68,7 @@ export default function SplitFlapTile({
       volumeJitter: (Math.random() * 2 - 1) * 0.08,
     };
 
-    runFlipSequence(refs, from, next, jitter, signal);
-    if(next === JAM_CHAR) {
+    if (next === JAM_CHAR) {
       runJamSequence(refs, from, jitter, signal);
     } else {
       runFlipSequence(refs, from, next, jitter, signal);
@@ -83,11 +82,29 @@ export default function SplitFlapTile({
 
   return (
     <div className="tile" data-index={tileIndex}>
-      <div className="tile-half top" ref={staticTop} />
-      <div className="tile-half bottom" ref={staticBottom} />
-      <div className="tile-flip flip-top" ref={flipTop} />
-      <div className="tile-flip flip-bottom" ref={flipBottom} />
+      <div className="tile-half top" ref={staticTop}>
+        <span className="glyph-text" />
+        <div className="glyph-swatch" />
+      </div>
+      <div className="tile-half bottom" ref={staticBottom}>
+        <span className="glyph-text" />
+        <div className="glyph-swatch" />
+      </div>
+      <div className="tile-flip flip-top" ref={flipTop}>
+        <span className="glyph-text" />
+        <div className="glyph-swatch" />
+      </div>
+      <div className="tile-flip flip-bottom" ref={flipBottom}>
+        <span className="glyph-text" />
+        <div className="glyph-swatch" />
+      </div>
       <div className="tile-hinge-dot" />
     </div>
   );
 }
+
+// targetChar/tileIndex/waveDelayMs are all primitives, so React's default
+// shallow prop comparison already does exactly the right thing here —
+// this alone stops 256 tiles from re-executing their render function
+// every time an unrelated ancestor re-renders (e.g. a settings change).
+export default memo(SplitFlapTile);
