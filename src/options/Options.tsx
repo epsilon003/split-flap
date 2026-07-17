@@ -84,7 +84,7 @@ export default function Options() {
 
   return (
     <div className="options-root">
-      <h1>Split Flap Display settings</h1>
+      <h1>Split Flap Display Settings</h1>
 
       <section>
         <h2>Board modules — drag order with the arrows</h2>
