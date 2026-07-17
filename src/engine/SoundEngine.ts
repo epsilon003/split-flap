@@ -8,6 +8,9 @@ class SoundEngine {
   private masterGain: GainNode | null = null;
   private _enabled = true;
   private _volume = 0.35;
+  private noiseBufferPool: AudioBuffer[] = [];
+  private activeTicks = 0;
+  private readonly MAX_CONCURRENT_TICKS = 24;
 
   private ensureContext(): AudioContext {
     if (!this.ctx) {
@@ -17,11 +20,32 @@ class SoundEngine {
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.value = this._volume;
       this.masterGain.connect(this.ctx.destination);
+      this.buildNoisePool(this.ctx);
     }
     if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
     return this.ctx;
+  }
+
+  /** Generates a handful of noise-burst buffer variants once, up front,
+   * instead of re-randomizing ~2200 samples on every single tick() call.
+   * With hundreds of ticks firing in a burst (e.g. the startup sweep),
+   * that per-tick allocation + fill was real, avoidable CPU work — a
+   * small fixed pool sounds effectively identical (variance still comes
+   * from the pitch/volume jitter layered on top) at a fraction of the cost. */
+  private buildNoisePool(ctx: AudioContext) {
+    const bufferSize = Math.floor(ctx.sampleRate * 0.05);
+    const poolSize = 6;
+    for (let p = 0; p < poolSize; p++) {
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const decay = 1 - i / bufferSize;
+        data[i] = (Math.random() * 2 - 1) * decay * decay;
+      }
+      this.noiseBufferPool.push(buffer);
+    }
   }
 
   set enabled(v: boolean) {
@@ -51,19 +75,28 @@ class SoundEngine {
    */
   tick(pitchJitter = 0, volumeJitter = 0) {
     if (!this._enabled) return;
+    // During a burst (e.g. the startup sweep), hundreds of tiles can tick
+    // within an overlapping window — each tick spins up ~7-8 Web Audio
+    // nodes (buffer source, 2 oscillators, gains, filter), so letting that
+    // go unbounded is real audio-graph overhead, and a real physical board
+    // wouldn't sound louder with more simultaneous flaps either (they mask
+    // each other acoustically). Silently dropping the tick when already at
+    // the cap is inaudible in practice — it's dropping into an already-busy
+    // moment, not silence.
+    if (this.activeTicks >= this.MAX_CONCURRENT_TICKS) return;
+    this.activeTicks++;
+    setTimeout(() => {
+      this.activeTicks--;
+    }, 80);
+
     const ctx = this.ensureContext();
     const now = ctx.currentTime;
     const gain = this.masterGain!;
 
     // Layer 1: filtered noise burst (the "flap" sound) — deeper and longer
     // than a light click, to read as a heavier physical mechanism
-    const bufferSize = Math.floor(ctx.sampleRate * 0.05);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      const decay = 1 - i / bufferSize;
-      data[i] = (Math.random() * 2 - 1) * decay * decay;
-    }
+    const buffer =
+      this.noiseBufferPool[Math.floor(Math.random() * this.noiseBufferPool.length)];
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
 
