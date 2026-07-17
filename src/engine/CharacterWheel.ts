@@ -49,21 +49,30 @@ export function isColorTile(char: string): boolean {
 }
 
 /**
- * Returns the forward path of wheel indices from `from` to `to`, inclusive
- * of the destination, exclusive of the start. A flap can only spin forward,
- * so reaching a character "behind" the current one means wrapping around
- * the full wheel — exactly like the real hardware.
- */
+* Returns the forward path of wheel indices from `from` to `to`, inclusive of the destination, exclusive of the start. A flap can only spin forward, so reaching a character "behind" the current one means wrapping around the full wheel — exactly like the real hardware.
+* Cached: with ~65 wheel positions, there are at most ~4,225 possible (from, to) pairs — trivially small to keep entirely in memory. This matters because the same handful of pairs get requested very often (e.g. every tile at startup computing blank -> the same color tile), so a cache turns up to 256 redundant wheel-walks into a handful.
+*/
+const pathCache = new Map<string, number[]>();
+
 export function forwardPath(fromChar: string, toChar: string): number[] {
+  const key = fromChar + "\u0001" + toChar;
+  const cached = pathCache.get(key);
+  if (cached) return cached;
+
   const from = wheelIndex(fromChar);
   const to = wheelIndex(toChar);
   const n = CHARACTER_WHEEL.length;
-  if (from === to) return [];
-  const steps = ((to - from) + n) % n;
-  const path: number[] = [];
-  for (let i = 1; i <= steps; i++) {
-    path.push((from + i) % n);
+  let path: number[];
+  if (from === to) {
+    path = [];
+  } else {
+    const steps = ((to - from) + n) % n;
+    path = [];
+    for (let i = 1; i <= steps; i++) {
+      path.push((from + i) % n);
+    }
   }
+  pathCache.set(key, path);
   return path;
 }
 
