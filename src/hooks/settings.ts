@@ -89,7 +89,7 @@ export const DEFAULT_SETTINGS: Settings = {
   tiltEnabled: true,
   soundVolume: 0.35,
   enabledModules: ["greeting", "siteTracker", "weather"],
-  moduleDurationSec: 27,
+  moduleDurationSec: 20,
   weatherLat: null,
   weatherLon: null,
   weatherUnit: "celsius",
