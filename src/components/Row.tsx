@@ -1,3 +1,4 @@
+import { memo } from "react";
 import SplitFlapTile from "./SplitFlapTile";
 
 interface RowProps {
@@ -7,13 +8,13 @@ interface RowProps {
   waveOrigin?: { row: number; col: number } | null;
 }
 
-export default function Row({ chars, rowIndex, cols, waveOrigin }: RowProps) {
+function Row({ chars, rowIndex, cols, waveOrigin }: RowProps) {
   return (
     <div className="board-row" data-row={rowIndex}>
       {chars.map((char, colIndex) => {
         const tileIndex = rowIndex * cols + colIndex;
         let waveDelayMs = 0;
-        if (waveOrigin) {  
+        if (waveOrigin) {
           const dr = rowIndex - waveOrigin.row;
           const dc = colIndex - waveOrigin.col;
           waveDelayMs = Math.sqrt(dr * dr + dc * dc) * 18;
@@ -33,3 +34,8 @@ export default function Row({ chars, rowIndex, cols, waveOrigin }: RowProps) {
     </div>
   );
 }
+
+// chars is a fresh array only when Board's memoized slice actually
+// changes, so default shallow-prop comparison (reference equality) is
+// exactly right here — no custom comparator needed.
+export default memo(Row);
