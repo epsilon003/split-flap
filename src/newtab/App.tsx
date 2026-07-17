@@ -72,18 +72,36 @@ export default function App() {
     };
   }, []);
 
+  // startup mechanical sweep, then hand off to rotation. Waiting on
+  // document.fonts.ready first avoids the (small, but real) chance of a
+  // font-swap reflow landing mid-animation if Space Mono hasn't finished
+  // loading yet when the sweep would otherwise start immediately.
   useEffect(() => {
-    setRaw(sweepPattern());
-    const t1 = setTimeout(() => clear(), 2100);
-    const t2 = setTimeout(() => setReady(true), 2500);
+    let cancelled = false;
+    let t1: ReturnType<typeof setTimeout> | undefined;
+    let t2: ReturnType<typeof setTimeout> | undefined;
+
+    const begin = () => {
+      if (cancelled) return;
+      setRaw(sweepPattern());
+      t1 = setTimeout(() => clear(), 2100);
+      t2 = setTimeout(() => setReady(true), 2500);
+    };
+
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(begin);
+    } else {
+      begin();
+    }
+
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
+      cancelled = true;
+      if (t1) clearTimeout(t1);
+      if (t2) clearTimeout(t2);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-        // this sweep took over the startup reveal 
   // enter search mode with "T", exit with Escape (handled inside the module)
   useEffect(() => {
     if (!settings.searchModeEnabled) return;
@@ -197,18 +215,18 @@ export default function App() {
           <Board grid={displayGrid} />
         </Frame>
         <div className="hint-row">
-         {settings.searchModeEnabled && !typingMode && (
+          {settings.searchModeEnabled && !typingMode && (
             <>
-             <span className="page-hint">Press T to search</span>
-             <span className="hint-sep">·</span>
-           </>
+              <span className="page-hint">Press T to search</span>
+              <span className="hint-sep">·</span>
+            </>
           )}
           
-            <a className="page-hint page-hint-link"
+          <a className="page-hint page-hint-link"
             href="../privacy/index.html"
             target="_blank"
             rel="noopener noreferrer"
-            >
+          >
             Privacy Policy
           </a>
         </div>
