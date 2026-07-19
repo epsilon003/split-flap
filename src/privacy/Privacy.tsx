@@ -210,7 +210,7 @@ export default function Privacy() {
         <h2>9. Contact</h2>
         <p>
           Questions or concerns regarding this Policy or the Extension's
-          data practices may be directed to: <strong>[email protected]</strong>
+          data practices may be directed to: <strong>abhimantrsingh@gmail.com</strong>
         </p>
       </section>
 
