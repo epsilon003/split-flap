@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import type { Align } from "../types";
 import { holidayGreetingFor } from "./holidays";
+import { todaysHolidayName } from "./nagerHolidays";
 
 interface GreetingParams {
   active: boolean;
   name: string;
+  holidayCountryCode: string;
   onUpdate: (lines: string[], align: Align) => void;
 }
 
@@ -118,20 +120,48 @@ function timeOfDayGreeting(hour: number): string {
   return options[Math.floor(Math.random() * options.length)];
 }
 
+function buildLines(greeting: string, name: string): string[] {
+  return name.trim() ? [greeting, name.trim().toUpperCase()] : [greeting];
+}
+
 /**
- * A Claude-style time-aware greeting, upgraded to check for a matching
- * holiday first — a fixed-date one (birthdays of the calendar, so to
- * speak) or a variable lunar-calendar one from a small lookup table.
- * Falls back to the ordinary time-of-day greeting otherwise. Recomputed
- * each time the module becomes active.
+ * holiday first — a fixed-date one (birthdays of the calendar, so to speak) or a variable lunar-calendar one from a small lookup table.
+ * Falls back to the ordinary time-of-day greeting otherwise. Recomputed each time the module becomes active.
  */
-export function useGreetingModule({ active, name, onUpdate }: GreetingParams) {
+export function useGreetingModule({
+  active,
+  name,
+  holidayCountryCode,
+  onUpdate,
+}: GreetingParams) {
   useEffect(() => {
     if (!active) return;
     const now = new Date();
-    const holiday = holidayGreetingFor(now);
-    const greeting = holiday ?? timeOfDayGreeting(now.getHours());
-    const lines = name.trim() ? [greeting, name.trim().toUpperCase()] : [greeting];
-    onUpdate(lines, "center");
-  }, [active, name, onUpdate]);
+
+    const staticHoliday = holidayGreetingFor(now);
+    if (staticHoliday) {
+      onUpdate(buildLines(staticHoliday, name), "center");
+      return;
+    }
+
+    // show the ordinary greeting immediately, then upgrade it if the
+    // async Nager.Date lookup finds something before we're deactivated
+    const fallback = timeOfDayGreeting(now.getHours());
+    onUpdate(buildLines(fallback, name), "center");
+
+    let cancelled = false;
+    todaysHolidayName(holidayCountryCode, now)
+      .then((holidayName) => {
+        if (cancelled || !holidayName) return;
+        onUpdate(buildLines(`HAPPY ${holidayName.toUpperCase()}`, name), "center");
+      })
+      .catch(() => {
+        // network hiccup or unsupported country code — the time-of-day
+        // greeting already showing is a perfectly fine fallback
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [active, name, holidayCountryCode, onUpdate]);
 }
