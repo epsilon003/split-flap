@@ -6,7 +6,8 @@ export type ModuleId =
   | "chess"
   | "wakatime"
   | "steam"
-  | "monkeytype";
+  | "monkeytype"
+  | "crypto";
 
 export const ALL_MODULES: ModuleId[] = [
   "greeting",
@@ -17,6 +18,7 @@ export const ALL_MODULES: ModuleId[] = [
   "wakatime",
   "steam",
   "monkeytype",
+  "crypto",
 ];
 
 export const MODULE_LABELS: Record<ModuleId, string> = {
@@ -28,6 +30,7 @@ export const MODULE_LABELS: Record<ModuleId, string> = {
   wakatime: "WakaTime coding time",
   steam: "Steam playtime",
   monkeytype: "MonkeyType WPM",
+  crypto: "Crypto prices",
 };
 
 export type ThemeId =
@@ -68,6 +71,8 @@ export interface Settings {
   weatherLon: number | null;
   weatherUnit: "celsius" | "fahrenheit";
   yourName: string;
+  /** ISO 3166-1 alpha-2 code, e.g. "IN", "US" — used for the Nager.Date public holiday lookup that supplements the greeting module. */
+  holidayCountryCode: string;
   theme: ThemeId;
   customThemeColor: string;
   searchModeEnabled: boolean;
@@ -81,6 +86,9 @@ export interface Settings {
   steamApiKey: string;
   steamId: string;
   monkeytypeUsername: string;
+  /** Comma-separated CoinGecko coin IDs, e.g. "bitcoin,ethereum" */
+  cryptoCoinIds: string;
+  cryptoVsCurrency: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -94,9 +102,10 @@ export const DEFAULT_SETTINGS: Settings = {
   weatherLon: null,
   weatherUnit: "celsius",
   yourName: "",
+  holidayCountryCode: "IN",
   theme: "matte-black",
   customThemeColor: "#2a5ca8",
-  searchModeEnabled: true,
+  searchModeEnabled: false,
   siteTrackerConsent: false,
   githubUsername: "",
   chessUsername: "",
@@ -104,6 +113,8 @@ export const DEFAULT_SETTINGS: Settings = {
   steamApiKey: "",
   steamId: "",
   monkeytypeUsername: "",
+  cryptoCoinIds: "bitcoin,ethereum",
+  cryptoVsCurrency: "usd",
 };
 
 export function readSettings(): Promise<Settings> {
