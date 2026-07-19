@@ -33,7 +33,9 @@
     "https://api.chess.com/*",
     "https://wakatime.com/*",
     "https://api.steampowered.com/*",
-    "https://api.monkeytype.com/*"
+    "https://api.monkeytype.com/*",
+    "https://date.nager.at/*",
+    "https://api.coingecko.com/*"
   ],
   "minimum_chrome_version": "116"
 }
