@@ -18,6 +18,18 @@ const DATA_ROWS: { feature: string; data: string; goesTo: string; storedWhere: s
     storedWhere: "chrome.storage.sync",
   },
   {
+    feature: "Crypto Prices (disabled by default)",
+    data: "The coin list and currency you configure",
+    goesTo: "Transmitted directly to CoinGecko's public price API",
+    storedWhere: "chrome.storage.sync",
+  },
+  {
+    feature: "Greeting Holiday Lookup",
+    data: "Today's date and the country you select",
+    goesTo: "Transmitted directly to the public Nager.Date holiday API",
+    storedWhere: "chrome.storage.sync (country selection only)",
+  },
+  {
     feature: "Search Mode",
     data: "Text you type while Search Mode is active",
     goesTo: "Transmitted directly to Google Search, or used to navigate to a URL if the input resembles one",
@@ -132,6 +144,8 @@ export default function Privacy() {
           <li><strong>MonkeyType Public API</strong> — receives the username you provide; no authentication required.</li>
           <li><strong>WakaTime API</strong> — receives an API key generated and controlled by you.</li>
           <li><strong>Steam Web API</strong> — receives an API key and Steam ID generated and controlled by you.</li>
+          <li><strong>CoinGecko Public API</strong> — receives the coin list and currency you configure; no authentication required.</li>
+          <li><strong>Nager.Date Public API</strong> — receives the current date and your selected country code; no authentication required.</li>
           <li><strong>Google Search</strong> — receives search queries you submit while using Search Mode.</li>
         </ul>
         <p>
@@ -196,7 +210,7 @@ export default function Privacy() {
         <h2>9. Contact</h2>
         <p>
           Questions or concerns regarding this Policy or the Extension's
-          data practices may be directed to: <strong>abhimantrsingh@gmail.com</strong>
+          data practices may be directed to: <strong>[email protected]</strong>
         </p>
       </section>
 
