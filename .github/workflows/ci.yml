@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc -b
+
+      - name: Build (pages)
+        run: npx vite build
+
+      - name: Build (background service worker)
+        run: npx vite build --config vite.background.config.ts
+
+      - name: Sanity-check manifest exists in output
+        run: test -f dist/manifest.json
+
+      - name: Upload dist as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: split-flap-display-dist
+          path: dist/
+          retention-days: 14
