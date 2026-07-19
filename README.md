@@ -7,10 +7,7 @@ inspired this project. Individually-animated flap tiles, synthesized
 mechanical tick sounds, a startup sweep through the full character set,
 and a handful of small stat modules you can turn on if you want them.
 
-There is no backend. Nothing here talks to a server the developer
-controls — every network request goes straight from your browser to the
-specific public API a feature needs, and only when you've turned that
-feature on. See [Privacy](#privacy) below.
+![](screenshot.PNG)
 
 ## Features
 
