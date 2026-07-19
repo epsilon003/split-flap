@@ -10,7 +10,7 @@ export function applyOverlay(base: string[], time: string, date: string): string
 
   const timeChars = Array.from(time.toUpperCase()).slice(0, BOARD_COLS);
   timeChars.forEach((c, i) => {
-    next[0 * BOARD_COLS + i] = c;
+    next[i] = c;
   });
 
   const dateChars = Array.from(date).slice(0, BOARD_COLS);
