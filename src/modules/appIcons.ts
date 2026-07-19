@@ -46,5 +46,13 @@ export const MONKEYTYPE_ICON = [
   "YY YY Y",
   "       ",
 ];
+export const COIN_ICON = [
+  "  YYY  ",
+  " YYYYY ",
+  "YY Y YY",
+  "YY Y YY",
+  " YYYYY ",
+  "  YYY  ",
+];
 export const APP_ICON_WIDTH = 7;
 export const APP_ICON_HEIGHT = 6;
