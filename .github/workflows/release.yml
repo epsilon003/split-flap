@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npx tsc -b
+
+      - name: Build (pages)
+        run: npx vite build
+
+      - name: Build (background service worker)
+        run: npx vite build --config vite.background.config.ts
+
+      - name: Sanity-check manifest exists in output
+        run: test -f dist/manifest.json
+
+      - name: Zip dist for distribution
+        run: |
+          cd dist
+          zip -r ../split-flap-display-${{ github.ref_name }}.zip .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: split-flap-display-${{ github.ref_name }}.zip
+          generate_release_notes: true
