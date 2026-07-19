@@ -96,17 +96,49 @@ export default function Options() {
     switch (id) {
       case "greeting":
         return (
-          <label className="field">
-            Your name (optional)
-            <input
-              type="text"
-              placeholder="Leave blank for just the greeting"
-              value={settings.yourName}
-              onChange={(e) =>
-                setSettings((s) => ({ ...s, yourName: e.target.value }))
-              }
-            />
-          </label>
+          <>
+            <label className="field">
+              Your name (optional)
+              <input
+                type="text"
+                placeholder="Leave blank for just the greeting"
+                value={settings.yourName}
+                onChange={(e) =>
+                  setSettings((s) => ({ ...s, yourName: e.target.value }))
+                }
+              />
+            </label>
+            <label className="field">
+              Holiday country
+              <select
+                value={settings.holidayCountryCode}
+                onChange={(e) =>
+                  setSettings((s) => ({ ...s, holidayCountryCode: e.target.value }))
+                }
+              >
+                <option value="IN">India</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="CA">Canada</option>
+                <option value="AU">Australia</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+                <option value="JP">Japan</option>
+                <option value="BR">Brazil</option>
+                <option value="SG">Singapore</option>
+                <option value="NL">Netherlands</option>
+                <option value="IE">Ireland</option>
+                <option value="NZ">New Zealand</option>
+                <option value="ZA">South Africa</option>
+              </select>
+            </label>
+            <p className="hint">
+              A few fixed-date holidays (like Pongal) are always checked
+              first regardless of this setting. This adds live lookup for
+              many more, via the public Nager.Date holiday API — it doesn't
+              cover Diwali/Holi-style lunar holidays.
+            </p>
+          </>
         );
 
       case "siteTracker":
@@ -264,6 +296,41 @@ export default function Options() {
               }
             />
           </label>
+        );
+
+      case "crypto":
+        return (
+          <>
+            <p className="hint">
+              CoinGecko coin IDs, comma-separated (up to 3) — e.g.
+              "bitcoin,ethereum,solana", not ticker symbols.
+            </p>
+            <label className="field">
+              Coins
+              <input
+                type="text"
+                value={settings.cryptoCoinIds}
+                onChange={(e) =>
+                  setSettings((s) => ({ ...s, cryptoCoinIds: e.target.value }))
+                }
+              />
+            </label>
+            <label className="field">
+              Currency
+              <select
+                value={settings.cryptoVsCurrency}
+                onChange={(e) =>
+                  setSettings((s) => ({ ...s, cryptoVsCurrency: e.target.value }))
+                }
+              >
+                <option value="usd">USD</option>
+                <option value="eur">EUR</option>
+                <option value="gbp">GBP</option>
+                <option value="inr">INR</option>
+                <option value="jpy">JPY</option>
+              </select>
+            </label>
+          </>
         );
     }
   };
