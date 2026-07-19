@@ -45,9 +45,6 @@ feature on. See [Privacy](#privacy) below.
 - **A jammed-tile error state.** If a module's fetch fails, a couple of
   tiles visibly jam mid-flip instead of cleanly spelling "UNAVAILABLE" —
   more mechanical, less like a broken webpage.
-- **A shadowed custom cursor** on the new tab page (a real cursor image
-  via CSS `cursor: url()`, not a JS-tracked element — no lag, no fake
-  cursor feel).
 
 ## Install
 
@@ -169,29 +166,6 @@ audio nodes.
   either, so it doesn't close this gap on its own. A proper fix would be a
   real panchang calculation or a holiday source that specifically covers
   lunar Hindu festivals.
-- Never tested in a real, running Chrome instance during development —
-  every fix in this project's history has been verified via `tsc`/`vite
-  build` and reasoned through against the code, not watched. If something
-  looks or sounds wrong, it probably needs a real look.
-- No automated tests.
-
-## Not implemented (researched, deliberately skipped)
-
-A few features got real research but didn't make the cut, usually because
-they need infrastructure this project intentionally avoids:
-
-- **Strava** — needs a `client_secret`-based OAuth exchange with no public/PKCE
-  option, which can't live safely in a distributed browser extension.
-- **Instagram / Pinterest** — both effectively closed off for reading
-  arbitrary public profile data without business-account OAuth and an app
-  review process.
-- **NASA APOD** — official API needs a personal key (same tier as
-  WakaTime/Steam, would be easy to add), but the unofficial no-key CORS
-  wrapper some projects use for it turned up unreliable in research, so
-  it wasn't worth building against.
-- **Custom developer dashboards** — architecturally feasible via MV3's
-  `optional_host_permissions` + runtime `chrome.permissions.request()`,
-  but deliberately not built.
 
 ## Credits
 
