@@ -36,6 +36,8 @@ anywhere) it is retained.
 | Weather | Approximate geographic coordinates, obtained via your browser's Geolocation API | Transmitted directly to Open-Meteo (api.open-meteo.com) to retrieve current conditions | Coordinates are cached locally in `chrome.storage.sync` to avoid repeated permission prompts |
 | Time on Sites *(disabled by default)* | The hostname of the active browser tab (e.g., `github.com`); full URLs, page content, and inactive tabs are never accessed | Not transmitted anywhere; processed and retained exclusively on your device | Stored in `chrome.storage.local`; automatically deleted after three (3) days and reset daily |
 | Third-Party Stat Modules — GitHub, Chess.com, WakaTime, Steam, and MonkeyType *(all disabled by default)* | A username or API key that you provide directly | Transmitted directly to the corresponding third-party service's public API | The credential you provide is stored in `chrome.storage.sync` so that it need not be re-entered |
+| Crypto Prices *(disabled by default)* | The coin list and currency you configure | Transmitted directly to CoinGecko's public price API | Your coin/currency selection is stored in `chrome.storage.sync` |
+| Greeting Holiday Lookup | Today's date and the country you select | Transmitted directly to the public Nager.Date holiday API | Your country selection is stored in `chrome.storage.sync`; holiday data returned is not retained |
 | Search Mode | Text you type while Search Mode is active | Transmitted directly to Google Search, or used to navigate directly to a URL if the input resembles one — functionally equivalent to typing into your browser's address bar | Not retained by the Extension |
 | Preferences | Your configuration choices (theme, module selection and order, sound settings, and similar preferences) | Not transmitted anywhere | Stored in `chrome.storage.sync`, which synchronizes across your own signed-in browser instances via your Google Account, consistent with standard Chrome extension behavior |
 
@@ -79,6 +81,11 @@ applicable, configured by you:
   through your own WakaTime account.
 - **Steam Web API** — receives an API key and Steam ID generated and
   controlled by you through your own Steam account.
+- **CoinGecko Public API** — receives the coin list and currency you
+  configure; no authentication is required.
+- **Nager.Date Public API** — receives the current date and the country
+  code you select, to check for a matching public holiday; no
+  authentication is required.
 - **Google Search** — receives search queries you submit while using
   Search Mode.
 
@@ -134,7 +141,7 @@ information from, children.
 Questions or concerns regarding this Policy or the Extension's data
 practices may be directed to:
 
-**[email protected]**
+**[abhimantrsingh@gmail.com]**
 
 ## 10. Changes to This Policy
 

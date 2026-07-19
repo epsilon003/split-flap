@@ -1,91 +1,199 @@
-# Split Flap Display — v7
+# Split Flap Display
 
-A split-flap mechanical display for your new tab, inspired by Vestaboard.
-MV3 Chrome extension, no backend, no accounts.
-![](screenshot.PNG)
-## What changed in this pass
+A Chrome extension that replaces your new tab page with a mechanical
+split-flap board simulation — the kind you'd see on an old airport
+departures board, or on a [Vestaboard](https://www.vestaboard.com/), which
+inspired this project. Individually-animated flap tiles, synthesized
+mechanical tick sounds, a startup sweep through the full character set,
+and a handful of small stat modules you can turn on if you want them.
 
-- **Weather icon widened further** — 6x6 → 9x6, bolder/fuller shapes.
-  Vertical space was already maxed at 6 rows (everything below the
-  permanent clock/date), so "bigger" now comes from width and boldness.
-- **Four new stat modules**, all off by default, all needing the user's
-  own username/API key: **GitHub** (public REST API, no auth), **Chess.com**
-  (public stats API, no auth), **WakaTime** (personal API key), **Steam**
-  (personal API key + Steam ID). Chosen because none of them need OAuth or
-  an app-review process — see the platform research from last round.
-- **User-controlled module order.** `enabledModules` in Settings is now the
-  literal rotation order — Settings has up/down arrows per module instead
-  of a fixed sequence.
-- **Time-on-sites tracker**, shown right after the greeting by default.
-  Tracks active-tab hostnames locally via a new background service-worker
-  listener (`tabs.onActivated`/`onUpdated`, `windows.onFocusChanged`, plus
-  a 1-minute `alarms` checkpoint so long sessions and service-worker
-  restarts don't lose data). Top 5 sites by time today, resets naturally at
-  midnight since storage is date-keyed. **Off by default** — this is the
-  most privacy-sensitive thing in the extension, so it requires a separate,
-  explicit consent toggle in Settings, distinct from just being in the
-  rotation list. Data never leaves the device and auto-prunes after 3 days.
-- **"Press T to search" hint**, small and subtle, below the board — only
-  shown when search mode is actually enabled.
-- Fixed a real bug while building the tracker: the generic text-centering
-  helper (`useBoard.setLines`) didn't know rows 0–1 are permanently
-  reserved for the clock/date overlay, so a tall enough module (like the
-  6-line tracker) would have silently collided with it. Now reserved
-  properly for every module that uses it.
+There is no backend. Nothing here talks to a server the developer
+controls — every network request goes straight from your browser to the
+specific public API a feature needs, and only when you've turned that
+feature on. See [Privacy](#privacy) below.
 
-## New permissions (this is the significant one to flag)
+## Features
 
-Adding the tracker and the four new API integrations changed the
-permission surface substantially:
-- `tabs` — required for the time-on-sites feature to read the active tab's
-  hostname. Inert unless that feature is explicitly enabled.
-- `alarms` — periodic checkpointing/pruning for the same feature.
-- `host_permissions` for api.open-meteo.com, api.github.com,
-  api.chess.com, wakatime.com, api.steampowered.com — lets the extension
-  page fetch these directly regardless of each API's own CORS policy
-  (Steam's API in particular doesn't set CORS headers at all, so this is
-  required for that one to work from a browser context rather than just a
-  defensive addition).
+- **Physical-feeling tiles.** Each tile is a real two-flap mechanism, not
+  a font trick — flaps only spin forward through a fixed character wheel,
+  exactly like the hardware, with per-tile randomized timing so the board
+  never looks synchronized.
+- **A permanent clock and date**, pinned to the top-left corner,
+  independent of whatever else is on the board.
+- **Time-of-day (and holiday-aware) greetings.** A hardcoded table
+  (fixed-date globals, plus India/Tamil-Nadu-relevant ones) is checked
+  first; if nothing matches, a live lookup against the public Nager.Date
+  API checks for a public holiday in the country you select, before
+  falling back to the ordinary "good morning."
+- **Local weather**, with a small pixel-art condition icon, auto-located
+  via your browser (no manual city search needed).
+- **Optional stat modules** (all off by default): GitHub, Chess.com,
+  WakaTime, Steam, MonkeyType, and crypto prices (via CoinGecko). Reorder
+  them however you like — whatever order they're listed in Settings is
+  the order they rotate on the board.
+- **A private, on-device "time on sites" tracker.** Off by default and
+  requires a separate, explicit opt-in beyond just adding it to the
+  rotation, since it's the one feature that needs the `tabs` permission.
+  Shows your top 5 sites by time today; resets at midnight; nothing ever
+  leaves your device.
+- **Search mode.** Press `T` on the board, type a query or a URL, hit
+  `Enter` — works like the browser's own address bar.
+- **Six frame finishes**: Matte Black, Brushed Metal, Modern White,
+  Walnut, Transit Yellow, and a fully custom accent color. Cycle through
+  them with the button on the new tab page, or pick one in Settings.
+  There's also a floating volume control next to it.
+- **A jammed-tile error state.** If a module's fetch fails, a couple of
+  tiles visibly jam mid-flip instead of cleanly spelling "UNAVAILABLE" —
+  more mechanical, less like a broken webpage.
+- **A shadowed custom cursor** on the new tab page (a real cursor image
+  via CSS `cursor: url()`, not a JS-tracked element — no lag, no fake
+  cursor feel).
 
-This is no longer the minimal-permission extension it started as — see the
-privacy policy for the full accounting, and the Store Listing draft for
-per-permission justification text for the Web Store dashboard.
+## Install
 
-## Web Store submission — what's now done
-
-- [x] Privacy policy drafted (`PRIVACY_POLICY.md`) — covers what's
-  collected (nothing, server-side), what's local-only, and an explicit
-  section on India's DPDP Act 2023 alongside the more standard GDPR/CCPA-
-  style disclosures Google's dashboard expects
-- [x] Single-purpose statement, store summary, full description, category
-  recommendation, and per-permission justification text (`STORE_LISTING.md`)
-- [x] Promotional tile image, 440×280 (`promo_tile_440x280.png`)
-
-**Still blocked** — genuinely need your input or a real browser:
-- [ ] A place to host the privacy policy publicly (GitHub Pages on your
-  existing account is the natural option — flagged in `STORE_LISTING.md`)
-- [ ] A real contact email to replace the placeholder in the policy
-- [ ] Actual screenshots from a loaded instance (1280×800 or 640×400) — I
-  still can't produce these without a live Chrome instance
-- [ ] Developer account registration ($5 one-time fee)
-- [ ] Actually loading and testing this in real Chrome — everything in
-  this project has been verified structurally, never visually, for seven
-  rounds now
-
-## Load it
-
+**From source:**
 ```
 npm install
 npm run build
 ```
+Then in Chrome: `chrome://extensions` → enable **Developer mode** → **Load
+unpacked** → select the `dist/` folder. Open a new tab.
 
-`chrome://extensions` → Developer mode → Load unpacked → select `dist/`.
+This isn't (yet) published on the Chrome Web Store — see
+[`STORE_LISTING.md`](./STORE_LISTING.md) for the submission draft if
+you're picking that up.
 
-## Current modules (default order)
+## Configuring modules
 
-1. **Greeting** — time-of-day or holiday-aware
-2. **Time on sites** — off by default, needs opt-in
-3. **Weather** — auto-located, Celsius by default, with a condition icon
+Open Settings (the extension's toolbar icon → "Modules, weather & more,"
+or right-click the extension icon → Options). The **Modules** tab lists
+everything currently in rotation — click a module's name to expand its
+config inline (username, API key, whatever it needs), use the arrows to
+reorder, or add more from the chip row below. The **Display** tab covers
+the frame finish, sound, clock format, and cursor tilt.
 
-Off by default, addable via Settings: GitHub, Chess.com, WakaTime, Steam.
-Search mode (press `T`) is a separate toggle, not part of the rotation.
+| Module | Needs | Auth |
+|---|---|---|
+| Greeting | Nothing (name and holiday country are optional) | — |
+| Weather | Browser location permission | — |
+| Time on sites | Explicit opt-in checkbox | — |
+| GitHub | Username | None |
+| Chess.com | Username | None |
+| MonkeyType | Username | None |
+| Crypto prices | Coin list + currency | None |
+| WakaTime | Your own API key | Personal key you generate |
+| Steam | Your own API key + Steam ID | Personal key you generate |
+
+## Privacy
+
+Full policy: [`PRIVACY_POLICY.md`](./PRIVACY_POLICY.md) (also bundled
+in-extension at Settings → Privacy Policy, and as a standalone page in
+[`hosting/index.html`](./hosting/index.html) for external hosting). Short
+version: nothing is collected by the developer. Weather sends coordinates
+to Open-Meteo; the stat modules send only the username/key you provide,
+directly to that service; the site tracker never leaves your device and
+is off unless you turn it on.
+
+## Architecture
+
+Hand-rolled Vite build — four separate build passes rather than a single
+MV3 bundler plugin, since the background service worker needs a fixed
+output filename and the New Tab/popup/options/privacy pages are a
+standard multi-page app:
+
+```
+npm run build
+  → tsc -b                                  (typecheck)
+  → vite build                              (newtab + popup + options + privacy pages)
+  → vite build --config vite.background.config.ts   (background.js)
+```
+
+```
+src/
+├── newtab/        New Tab page (the board itself)
+├── popup/         Toolbar popup (quick toggles)
+├── options/        Settings page
+├── privacy/        Bundled privacy policy page
+├── background/      MV3 service worker (site-tracker time accounting)
+├── components/     Board, Row, SplitFlapTile, Frame, ThemeToggle, VolumeControl
+├── engine/          Animation, sound, character wheel, layout, sweep/error state
+├── modules/          One file per board module (weather, github, chess, ...)
+├── hooks/            Settings read/write/sync, board grid state
+└── styles/           Tile and board CSS
+```
+
+The tile animation is the core of the whole project: `CharacterWheel.ts`
+defines the fixed, forward-only wheel every flap cycles through (with a
+small cache since the same (from, to) pairs get requested constantly),
+`Animator.ts` drives the actual Web Animations API sequences per tile
+(capped in both duration *and* step count so a worst-case wheel traversal
+can't run away), and `SoundEngine.ts` synthesizes every tick procedurally
+via Web Audio — no sample files, no licensing questions, and a small
+pre-generated buffer pool plus a concurrency cap so a burst of hundreds of
+simultaneous ticks (e.g. the startup sweep) doesn't spin up unbounded
+audio nodes.
+
+## Development notes
+
+- `BOARD_COLS`/`BOARD_ROWS` in `engine/boardConfig.ts` are the single
+  source of truth for grid dimensions — nothing else should hardcode 32
+  or 8.
+- Rows 0–1 are permanently reserved for the clock/date overlay;
+  `useBoard.setLines` and `engine/iconTextLayout.ts`'s `composeIconTextBoard`
+  both already account for this, so any new module built on top of either
+  helper gets it for free.
+- `SplitFlapTile`, `Row`, and `Board` are all memoized, and `Board` keeps
+  row-slice array references stable across renders — don't undo this
+  without a reason, it's what stops an unrelated settings change from
+  re-executing all 256 tile components.
+- New stat modules follow a consistent shape: a `use<X>Module({ active,
+  ...config, onUpdate })` hook, a cache keyed on the config that changed,
+  and a `jammedErrorBoard(...)` call on fetch failure instead of clean
+  error text. `githubModule.ts` is the shortest reference implementation.
+- Adding a new external API means updating three places at once, not
+  just the module code: `public/manifest.json`'s `host_permissions`, and
+  the third-party services list in *both* `PRIVACY_POLICY.md` and
+  `src/privacy/Privacy.tsx` (and ideally `hosting/index.html` too, if
+  you're keeping the externally-hosted copy in sync). Easy to forget one —
+  `api.monkeytype.com` was missing from `host_permissions` for a while
+  after that module shipped.
+
+## Known limitations
+
+- **Lunar-calendar holidays** (Diwali, Holi) in `modules/holidays.ts` are
+  still hardcoded per-year and need manual upkeep. The greeting module now
+  also checks the public [Nager.Date API](https://date.nager.at/) as a
+  live supplement, which covers many more fixed/algorithmically-computable
+  holidays across 150+ countries — but Nager explicitly doesn't cover
+  Islamic-calendar holidays, and very likely doesn't cover Hindu ones
+  either, so it doesn't close this gap on its own. A proper fix would be a
+  real panchang calculation or a holiday source that specifically covers
+  lunar Hindu festivals.
+- Never tested in a real, running Chrome instance during development —
+  every fix in this project's history has been verified via `tsc`/`vite
+  build` and reasoned through against the code, not watched. If something
+  looks or sounds wrong, it probably needs a real look.
+- No automated tests.
+
+## Not implemented (researched, deliberately skipped)
+
+A few features got real research but didn't make the cut, usually because
+they need infrastructure this project intentionally avoids:
+
+- **Strava** — needs a `client_secret`-based OAuth exchange with no public/PKCE
+  option, which can't live safely in a distributed browser extension.
+- **Instagram / Pinterest** — both effectively closed off for reading
+  arbitrary public profile data without business-account OAuth and an app
+  review process.
+- **NASA APOD** — official API needs a personal key (same tier as
+  WakaTime/Steam, would be easy to add), but the unofficial no-key CORS
+  wrapper some projects use for it turned up unreliable in research, so
+  it wasn't worth building against.
+- **Custom developer dashboards** — architecturally feasible via MV3's
+  `optional_host_permissions` + runtime `chrome.permissions.request()`,
+  but deliberately not built.
+
+## Credits
+
+Inspired by [Vestaboard](https://www.vestaboard.com/), an independent
+hardware product this extension has no affiliation with.
