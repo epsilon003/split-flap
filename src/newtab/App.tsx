@@ -21,6 +21,7 @@ import { useChessModule } from "../modules/chessModule";
 import { useWakatimeModule } from "../modules/wakatimeModule";
 import { useSteamModule } from "../modules/steamModule";
 import { useMonkeytypeModule } from "../modules/monkeytypeModule";
+import { useCryptoModule } from "../modules/cryptoModule";
 import { useTypingModule } from "../modules/typingModule";
 import { applyOverlay } from "../engine/overlay";
 import { soundEngine } from "../engine/SoundEngine";
@@ -138,6 +139,7 @@ export default function App() {
   useGreetingModule({
     active: ready && activeModuleId === "greeting",
     name: settings.yourName,
+    holidayCountryCode: settings.holidayCountryCode,
     onUpdate: handleModuleUpdate,
   });
 
@@ -183,6 +185,13 @@ export default function App() {
   useMonkeytypeModule({
     active: ready && activeModuleId === "monkeytype",
     username: settings.monkeytypeUsername,
+    onUpdate: setRaw,
+  });
+
+  useCryptoModule({
+    active: ready && activeModuleId === "crypto",
+    coinIds: settings.cryptoCoinIds,
+    vsCurrency: settings.cryptoVsCurrency,
     onUpdate: setRaw,
   });
 
